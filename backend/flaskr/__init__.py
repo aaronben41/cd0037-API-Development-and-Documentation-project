@@ -31,12 +31,14 @@ def create_app(test_config=None):
     """
     @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
     """
+
     CORS(app, resources={r"/api/*": {"origins": "*"}})
+    #DONE
 
     """
     @TODO: Use the after_request decorator to set Access-Control-Allow
     """
-
+    
     # CORS Headers
     @app.after_request
     def after_request(response):
@@ -47,6 +49,8 @@ def create_app(test_config=None):
             "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
         )
         return response
+    
+    #DONE
 
     """
     @TODO:
@@ -65,6 +69,7 @@ def create_app(test_config=None):
         except:
            abort(404)
 
+    #DONE
     """
     @TODO:
     Create an endpoint to handle GET requests for questions,
@@ -95,6 +100,8 @@ def create_app(test_config=None):
                 "categories": {category.id:category.type for category in categories}
             })
 
+    #DONE
+    
     """
     @TODO:
     Create an endpoint to DELETE question using a question ID.
@@ -125,7 +132,7 @@ def create_app(test_config=None):
         finally:
             db.session.close()
 
-
+    #DONE
 
     """
     @TODO:
@@ -137,7 +144,7 @@ def create_app(test_config=None):
     the form will clear and the question will appear at the end of the last page
     of the questions list in the "List" tab.
     """
-    #&
+
     """
     @TODO:
     Create a POST endpoint to get questions based on a search term.
@@ -148,8 +155,10 @@ def create_app(test_config=None):
     only question that include that string within their question.
     Try using the word "title" to start.
     """
+
+    
     @app.route('/questions', methods=['POST'])
-    def create_question():
+    def create_or_search_question():
         body = request.get_json()
 
         question_new = body.get('question', '')
@@ -189,8 +198,6 @@ def create_app(test_config=None):
             abort(422)
         finally:
             db.session.close()
-
-
   
 
     """
