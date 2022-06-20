@@ -24,7 +24,7 @@ class TriviaTestCase(unittest.TestCase):
         }
 
         self.search_term = {
-            "searchTerm": "search"
+            "searchTerm": "is"
         }
 
         self.quiz_422 = {
@@ -101,7 +101,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data["total_questions"])
 
     def test_404_not_found_delete_question(self):
-        res = self.client().delete("/questions/1000")
+        res = self.client().delete("/questions/2000")
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -137,13 +137,13 @@ class TriviaTestCase(unittest.TestCase):
             self.assertTrue(data['total_questions'])
     
     def test_retrieve_category_questions(self):
-        res = self.client().get("/categories/3/questions")
+        res = self.client().get("//categories/5/questions")
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['current_category'], "Geography")
+        self.assertEqual(data['current_category'], "Entertainment")
+        self.assertTrue(data["questions"])
         self.assertEqual(data["success"], True)
-        self.assertTrue(data['questions'])
         self.assertTrue(data['total_questions'])
 
     def test_404_not_found_retrieve_category_questions(self):
@@ -156,16 +156,16 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_retrieve_quiz(self):
         quiz = {
-            "quiz_category": {"id": 2, "type": "Art"},
-            "previous_questions": [23, 24]
+            "quiz_category": {"id": 1, "type": "Science"},
+            "previous_questions": [20, 21]
         }
         res = self.client().post("/quizzes", json=quiz)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['question'])
-        self.assertNotEqual(data['question']['id'], 23)
-        self.assertNotEqual(data['question']['id'], 24)
+        self.assertNotEqual(data['question']['id'], 20)
+        self.assertNotEqual(data['question']['id'], 21)
     
     def test_422_unprocessable_retrieving_quizzes(self):
         res = self.client().post("/quizzes", json=self.quiz_422)
