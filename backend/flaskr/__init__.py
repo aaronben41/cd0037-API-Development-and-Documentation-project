@@ -121,7 +121,7 @@ def create_app(test_config=None):
             })
         except:
             db.session.rollback()
-            abort(422)
+            abort(404)
         finally:
             db.session.close()
 
