@@ -2,6 +2,7 @@ import os
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
+from settings import HOST, USER, PASSWORD, DB_TEST
 
 from flaskr import create_app, QUESTIONS_PER_PAGE
 from models import setup_db, Question, Category
@@ -23,9 +24,6 @@ class TriviaTestCase(unittest.TestCase):
             "category": 2
         }
 
-        self.search_term = {
-            "searchTerm": "is"
-        }
 
         self.quiz_422 = {
             "quiz_category": {},
@@ -35,10 +33,10 @@ class TriviaTestCase(unittest.TestCase):
         """Initialize app"""
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_name = "trivia_test"
-        self.database_path = "postgresql://{}@{}/{}".format(
-            "postgres:7777", "localhost:5432", self.database_name
-            )
+        #self.database_name = "trivia_test"
+        self.database_path = 'postgresql://{}:{}@{}/{}'.format(
+                USER, PASSWORD, HOST, DB_TEST
+                )
 
         setup_db(self.app, self.database_path)
         
@@ -128,23 +126,23 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['error'])
     
     def test_search_questions(self):
-            res = self.client().post("/questions", json=self.search_term)
+            res = self.client().post("/questions", json={'searchTerm': 'movie'})
             data = json.loads(res.data)
 
             self.assertEqual(res.status_code, 200)
-            self.assertEqual(data["success"], True)
-            self.assertTrue(data['questions'])
-            self.assertTrue(data['total_questions'])
+            self.assertEqual(data['success'], True)
+            self.assertIsNotNone(data['questions'])
+            self.assertIsNotNone(data['total_questions'])
     
     def test_retrieve_category_questions(self):
-        res = self.client().get("//categories/5/questions")
+        res = self.client().get("/categories/5/questions")
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['current_category'], "Entertainment")
-        self.assertTrue(data["questions"])
+        self.assertEqual(data['current_category'], 'Entertainment')
         self.assertEqual(data["success"], True)
-        self.assertTrue(data['total_questions'])
+        self.assertIsNotNone(data["questions"])
+        self.assertIsNotNone(data['total_questions'])
 
     def test_404_not_found_retrieve_category_questions(self):
         res = self.client().get("/categories/150/questions")
@@ -156,16 +154,15 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_retrieve_quiz(self):
         quiz = {
-            "quiz_category": {"id": 1, "type": "Science"},
-            "previous_questions": [20, 21]
+            "quiz_category": {"id": 4, "type": "History"},
+            "previous_questions": []
         }
         res = self.client().post("/quizzes", json=quiz)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
         self.assertTrue(data['question'])
-        self.assertNotEqual(data['question']['id'], 20)
-        self.assertNotEqual(data['question']['id'], 21)
     
     def test_422_unprocessable_retrieving_quizzes(self):
         res = self.client().post("/quizzes", json=self.quiz_422)
