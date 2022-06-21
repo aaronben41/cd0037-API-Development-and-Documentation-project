@@ -47,3 +47,116 @@ Pay special attention to what data the frontend is expecting from each API respo
 By making notes ahead of time, you will practice the core skill of being able to read and understand code and will have a simple plan to follow to build out the endpoints of your backend API.
 
 > View the [Frontend README](./frontend/README.md) for more details.
+
+
+# API Reference
+
+# Endpoints
+
+## GET /categories
+
+Fetches all available categories,
+
+Request arguments: None,
+
+Returns all available categories and success value
+
+Sample: 'curl http://127.0.0.1:5000/categories'
+
+## GET /questions
+
+Fetches a list of questions in all categories
+
+Request arguments: Page
+
+Returns paginated questions of 10 questions per page, the success value (True or False), number of total questions, categories and current category
+
+Sample: 'curl http://127.0.0.1:5000/questions'
+
+## GET /categories/<int:category_id>/questions
+
+Fetches a list of questions based on a specified category
+
+Request arguments: category id
+
+Returns all questions in a given category, success value, number of total questions, and current category
+
+Sample: curl http://127.0.0.1:5000/categories/3/questions
+
+## DELETE /questions/<int:question_id>
+
+Deletes a question using its question id
+
+Request arguments: question id
+
+Returns the ID of the deleted question and the success value
+
+Sample: curl -X DELETE http://127.0.0.1:5000/questions/5
+
+## POST /quizzes
+
+Gets a question used to play the quiz. This endpoint takes a category and the previous question parameters, if available, and returns a new random question
+
+Request arguments: The quiz category and question IDs of previous questions
+
+Returns a random question within the selected category
+
+## POST /questions
+
+Creates a new question that is added to the database
+
+Request arguments: question, answer, difficulty and category
+
+Returns a success value, the id of the added question, paginated questions (also called 'current questions') - 10 questions page and total number of questions
+
+Sample: curl -X POST -H "Content-Type: application/json" -d '{"question":"Sample Question", "answer":"Sample Answer", "difficulty":"3", "category":"5"}' http://127.0.0.1:5000/questions | jq '.'
+
+## POST /questions/search
+
+Searches for a question using a provided search term
+
+Request argument: a search phrase
+
+Returns a success value, a list of questions containing the search phrase, total questions in the search and their category
+
+
+# Errors
+
+## Error 400
+
+Returns a json object with keys: success, error and message.
+
+{"success": false, "error": 400, "message": "bad request"}
+
+## Error 404
+
+Returns a json object with keys: success, error and message.
+
+{"success": false, "error": 404, "message": "Resource Not Found"}
+
+## Error 405
+
+Returns a json object with keys: success, error and message.
+
+{"success": False, "error": 405, "message": "method not allowed"})
+
+## Error 422
+
+Returns a json object with keys: success, error and message.
+
+{"success": false, "error": 422, "message": "unprocessable"}
+
+## Error 500
+
+Returns a json object with keys: success, error and message.
+
+{"success": false, "error": 500, "message": "internal server error"}
+
+# Testing
+
+To run the tests on the flask app, run in the backend folder:
+
+dropdb trivia_test
+createdb trivia_test
+psql trivia_test < trivia.psql
+python3 test_flaskr.py
